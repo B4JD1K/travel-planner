@@ -10,7 +10,8 @@ export default async function TripDetail({params}: { params: Promise<{ tripId: s
   if (!session) return <div>Please sign in.</div>
 
   const trip = await prisma.trip.findFirst({
-    where: {id: tripId, userId: session.user?.id}
+    where: {id: tripId, userId: session.user?.id},
+    include: {locations: true}
   });
 
   if (!trip) return <div>Trip not found.</div>
