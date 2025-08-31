@@ -5,7 +5,7 @@ import {prisma} from "@/lib/prisma";
 import {redirect} from "next/navigation";
 
 async function geocodeAddress(address: string) {
-  const apiKey = process.env.LOCATIONIQ_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
   const url = `https://eu1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(address)}&format=json`;
 
   const response = await fetch(url);
