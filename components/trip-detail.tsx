@@ -71,7 +71,7 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
 
               <div className="space-y-4 flex justify-between">
 
-                <div className="space-y-4w-3/4">
+                <div className="space-y-4 w-3/4">
                   <div className="flex items-start">
                     <Calendar className="h-6 w-6 mr-3 text-gray-500"/>
                     <div>
