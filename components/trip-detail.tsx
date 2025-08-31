@@ -111,24 +111,24 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
                   </div>
                 </div>
 
-                <div className="h-96 md:w-1/2 rounded-lg overflow-hidden shadow">
-                  <Map itineraries={trip.locations}/>
-                </div>
+                {trip.locations.length === 0 ? (
+                  <div className="text-center p-4">
+                    <p className="text-lg font-semibold mb-2">
+                      Add locations to see them on the map.
+                    </p>
+                    <Link href={`/trips/${trip.id}/itinerary/new`}>
+                      <Button>
+                        <Plus className="mr-2 h-5 w-5"/>
+                        Add Location
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="h-96 md:w-1/2 rounded-lg overflow-hidden shadow">
+                    <Map itineraries={trip.locations}/>
+                  </div>
+                )}
               </div>
-
-              {trip.locations.length === 0 && (
-                <div className="text-center p-4">
-                  <p className="text-lg font-semibold mb-2">
-                    Add locations to see them on the map.
-                  </p>
-                  <Link href={`/trips/${trip.id}/itinerary/new`}>
-                    <Button>
-                      <Plus className="mr-2 h-5 w-5"/>
-                      Add Location
-                    </Button>
-                  </Link>
-                </div>
-              )}
             </div>
           </TabsContent>
 
@@ -154,8 +154,25 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
           </TabsContent>
 
           <TabsContent value="map" className="space-y-6">
-            <div className="h-192 mt-4 w-full rounded-lg overflow-hidden shadow">
-              <Map itineraries={trip.locations}/>
+            <div className="mb-4">
+              <h2 className="text-2xl font-semibold">Big Map Preview</h2>
+              {trip.locations.length === 0 ? (
+                <div className="text-center p-4">
+                  <p className="text-lg font-semibold mb-2">
+                    Add locations to see the big map preview.
+                  </p>
+                  <Link href={`/trips/${trip.id}/itinerary/new`}>
+                    <Button>
+                      <Plus className="mr-2 h-5 w-5"/>
+                      Add Location
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="h-192 mt-4 w-full rounded-lg overflow-hidden shadow">
+                  <Map itineraries={trip.locations}/>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>
