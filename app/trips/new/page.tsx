@@ -105,7 +105,7 @@ export default function NewTrip() {
                 }}
               />
             </div>
-            <Button type="submit" disabled={isPending} className="w-full">
+            <Button type="submit" disabled={isPending} className="w-full cursor-pointer">
               {isPending ? "Creating..." : "Create Trip"}
             </Button>
           </form>

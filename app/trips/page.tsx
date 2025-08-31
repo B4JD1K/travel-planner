@@ -33,7 +33,7 @@ export default async function TripsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <Link href="/trips/new">
-          <Button>New Trip</Button>
+          <Button className="cursor-pointer">New Trip</Button>
         </Link>
       </div>
 
@@ -74,7 +74,7 @@ export default async function TripsPage() {
               <h3 className="text-xl font-medium mb-2">No trips yet.</h3>
               <p className="text-center mb-4 max-w-md">Start planning your adventure by creating your first trip.</p>
               <Link href="/trips/new">
-                <Button>Create Trip</Button>
+                <Button className="cursor-pointer">Create Trip</Button>
               </Link>
             </CardContent>
           </Card>
