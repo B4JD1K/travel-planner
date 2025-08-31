@@ -24,7 +24,7 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       {trip.imageUrl && (
-        <div className="w-full h72 md:h-96 overflow-hidden rounded-xl shadow-lg relative">
+        <div className="w-full h-72 md:h-96 overflow-hidden rounded-xl shadow-lg relative">
           <Image src={trip.imageUrl}
                  alt={trip.title}
                  className="object-cover"
@@ -35,26 +35,28 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
       )}
 
       <div className="bg-white p-6 shadow rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center">
-        <div>
-          <h1 className="text-4xl font-extrabold text-gray-900">
-            {trip.title}
-          </h1>
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <h1 className="text-4xl font-extrabold text-gray-900">
+              {trip.title}
+            </h1>
 
-          <div className="flex items-center text-gray-500 mt-2">
-            <Calendar className="h-5 w-5 mr-2"/>
-            <span className="text-lg">
+            <div className="flex items-center text-gray-500 mt-2">
+              <Calendar className="h-5 w-5 mr-2"/>
+              <span className="text-lg">
               {trip.startDate.toLocaleDateString()} - {trip.endDate.toLocaleDateString()}
             </span>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <Link href={`/trips/${trip.id}/itinerary/new`}>
-            <Button>
-              <Plus className="mr-2 h-5 w-5"/>
-              Add Location
-            </Button>
-          </Link>
+          <div className="ml-4">
+            <Link href={`/trips/${trip.id}/itinerary/new`}>
+              <Button>
+                <Plus className="mr-2 h-5 w-5"/>
+                Add Location
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -70,46 +72,48 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
             <div className="grip md:grid-cols-2 gap-6">
               <h2 className="text-2xl font-semibold mb-4">Trip Summary</h2>
 
-              <div className="space-y-4 flex justify-between">
-                <div className="space-y-4 w-1/3">
-                  <div className="flex items-start">
-                    <Calendar className="h-6 w-6 mr-3 text-gray-500"/>
-                    <div>
-                      <p className="font-medium text-gray-700">Dates</p>
-                      <p className="text-sm text-gray-500">
-                        {trip.startDate.toLocaleDateString()} - {trip.endDate.toLocaleDateString()}
-                        <br/>
-                        {
-                          `${Math.round((trip.endDate.getTime() - trip.startDate.getTime())
-                            / (1000 * 60 * 60 * 24)
-                          )} days(s)`
-                        }
-                      </p>
+              <div className="space-y-4 flex flex-col md:flex-row justify-between">
+                <div className="space-y-4 flex-col md:w-1/2">
+                  <div className="space-y-4 flex justify-between">
+                    <div className="flex items-start w-3/5">
+                      <Calendar className="h-6 w-6 mr-3 text-gray-500"/>
+                      <div className="min-w-40">
+                        <p className="font-medium text-gray-700">Dates</p>
+                        <p className="text-sm text-gray-500">
+                          {trip.startDate.toLocaleDateString()} - {trip.endDate.toLocaleDateString()}
+                          <br/>
+                          {
+                            `${Math.round((trip.endDate.getTime() - trip.startDate.getTime())
+                              / (1000 * 60 * 60 * 24)
+                            )} days(s)`
+                          }
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start w-2/5">
+                      <MapPin className="h-6 w-6 mr-3 text-gray-500"/>
+                      <div>
+                        <p className="font-medium text-gray-700">Destinations</p>
+                        <p>{trip.locations.length} {trip.locations.length === 1 ? "location" : "locations"}</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-start">
-                    <MapPin className="h-6 w-6 mr-3 text-gray-500"/>
-                    <div>
-                      <p>Destinations</p>
-                      <p>{trip.locations.length} {trip.locations.length === 1 ? "location" : "locations"}</p>
+                  <div className="space-y-1">
+                    <div className="flex items-start">
+                      <Pencil className="h-6 w-6 mr-3 text-gray-500"/>
+                      <div>
+                        <p className="font-medium text-gray-700">Description</p>
+                      </div>
                     </div>
+                    <p className="text-gray-600 ml-2 mr-2 text-sm italic leading-relaxed">{trip.description}</p>
                   </div>
                 </div>
 
-                <div className="space-y-1 w-2/3">
-                  <div className="flex items-start">
-                    <Pencil className="h-6 w-6 mr-3 text-gray-500"/>
-                    <div>
-                      <p className="font-medium text-gray-700">Description</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 ml-2 mr-2 text-sm italic leading-relaxed">{trip.description}</p>
+                <div className="h-96 md:w-1/2 rounded-lg overflow-hidden shadow">
+                  <Map itineraries={trip.locations}/>
                 </div>
-              </div>
-
-              <div className="h-144 mt-4 w-full rounded-lg overflow-hidden shadow">
-                <Map itineraries={trip.locations}/>
               </div>
 
               {trip.locations.length === 0 && (
@@ -146,6 +150,12 @@ export default function TripDetailClient({trip}: TripDetailClientProps) {
               ) : (
                 <SortableItinerary locations={trip.locations} tripId={trip.id}/>
               )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="map" className="space-y-6">
+            <div className="h-192 mt-4 w-full rounded-lg overflow-hidden shadow">
+              <Map itineraries={trip.locations}/>
             </div>
           </TabsContent>
         </Tabs>
