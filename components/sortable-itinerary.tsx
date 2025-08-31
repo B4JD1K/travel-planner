@@ -24,7 +24,7 @@ function SortableItem({item}: { item: Location }) {
     >
       <div className="text-sm w-25 flex text-gray-500 items-center">
         <Menu className="w-6 h-6 text-gray-100 hover:text-gray-300 hover:transition-shadow"/>
-        <p className="flex items-center ml-2 mr-2 justify-start font-medium">Loc. {item.order + 11}</p>
+        <p className="flex items-center ml-2 mr-2 justify-start font-medium">Loc. {item.order + 1}</p>
       </div>
 
       <div className="w-1/2 ml-2">
