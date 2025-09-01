@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import type {GlobeMethods} from "react-globe.gl";
 import {useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {MapPin} from "lucide-react";
 
 // Komponent Globe korzysta z przeglądarkowych API (w tym `window` oraz np. WebGL itp.)
 // Korzystając z importów `import Globe, {GlobeMethods} from "react-globe.gl"`
@@ -37,8 +38,6 @@ export default function GlobePage() {
         const countries = new Set<string>(
           data.map((loc: TransformedLocation) => loc.country)
         );
-
-        console.log(countries)
 
         setVisitedCountries(countries);
       } catch (err) {
@@ -118,6 +117,15 @@ export default function GlobePage() {
                           {/* eslint-disable-next-line react/no-unescaped-entities */}
                           You've visited <span className="font-bold">{visitedCountries.size}</span> countries.
                         </p>
+                      </div>
+
+                      <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+                        {Array.from(visitedCountries).sort().map((country, key) =>
+                          <div key={key} className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
+                            <MapPin className="h-4 w-4 text-red-500"/>
+                            <span className="font-medium">{country}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
