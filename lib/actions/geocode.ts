@@ -1,26 +1,58 @@
-interface GeocodeResult {
-  country: string,
+// Przechowuje wyniki geokodowania w pamięci
+const countryCache = new Map<string, string>();
+
+// Funkcja opóźnienia dla retry logic
+async function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function getCountryFromCoordinates(lat: number, lon: number): Promise<GeocodeResult> {
+// Funkcja do pobierania kraju na podstawie współrzędnych
+// TODO: Refactor z country_codes.json
+export async function getCountryFromCoordinates(lat: number, lon: number): Promise<{ country: string }> {
+  const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`; // Tworzymy unikalny klucz dla współrzędnych
+
+  // Sprawdzamy, czy wynik jest już w cache
+  if (countryCache.has(cacheKey)) {
+    return {country: countryCache.get(cacheKey)!};
+  }
+
   const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
   const url = `https://eu1.locationiq.com/v1/reverse.php?key=${apiKey}&lat=${lat}&lon=${lon}&format=json`;
 
-  const response = await fetch(url);
+  let attempts = 0;
+  const maxAttempts = 10; // Maksymalna liczba prób (zapytań)
+  const delayTime = 500; // Początkowe opóźnienie
 
-  const textResponse = await response.text();
+  while (attempts < maxAttempts) {
+    try {
+      const response = await fetch(url);
+      const textResponse = await response.text();
+      const data = JSON.parse(textResponse);
 
-  try {
-    const data = JSON.parse(textResponse);
-    console.log('data', data);
+      // Jeśli napotkany został błąd Rate Limited, ponawia zapytanie z opóźnieniem
+      if (data?.error?.includes("Rate Limited")) {
+        attempts++;
+        console.warn(`Rate limit exceeded. Retrying... (attempt ${attempts})`);
 
-    if (!data || !data.address)
-      return {country: 'Unknown country'};
+        await delay(delayTime * attempts);
+        continue;
+      }
 
-    return {country: data.address.country || "Unknown country"};
+      if (!data || !data.address || !data.address.country)
+        return {country: 'Unknown country'};
 
-  } catch (error) {
-    console.error("Error parsing LocationIQ reverse geocode response:", error);
-    throw new Error("Failed to parse reverse geocoding response.");
+      const country = data.address.country;
+
+      // Buforowanie wyników w pamięci
+      countryCache.set(cacheKey, country);
+
+      return {country};
+    } catch (error) {
+      console.error("Error fetching country:", error);
+      throw new Error("Failed to reverse geocode location.");
+    }
   }
+
+  // Jeśli wszystkie próby zawiodą
+  return {country: "Rate limit exceeded"};
 }
