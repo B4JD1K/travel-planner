@@ -3,6 +3,7 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {prisma} from "@/lib/prisma";
+import Image from "next/image";
 
 export default async function TripsPage() {
   const session = await auth();
@@ -28,6 +29,12 @@ export default async function TripsPage() {
     </div>
   }
 
+  if (!session?.user) return
+
+  const userName = session?.user?.name ?? "User";
+
+  const userProfileImage = session?.user?.image ?? '/user-profile-picture-placeholder.png';
+
   return (
     <div className="space-y-6 container mx-auto px-4 py-8">
       <div className="flex items-center justify-between">
@@ -39,9 +46,11 @@ export default async function TripsPage() {
 
       {/* Wyświetlanie listy podróży */}
       <Card>
+        <div className="flex items-center justify-between">
+        <div>
         <CardHeader>
           <CardTitle>
-            Welcome back, {session.user?.name}
+            Welcome back, {userName}!
           </CardTitle>
         </CardHeader>
 
@@ -64,6 +73,18 @@ export default async function TripsPage() {
             }
           </p>
         </CardContent>
+          </div>
+
+          <div className="pr-6">
+            <Image
+              src={userProfileImage}
+              alt={userName + " avatar"}
+              width={64}
+              height={64}
+              className="rounded-full"
+            />
+          </div>
+        </div>
       </Card>
 
       <div>
