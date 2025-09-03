@@ -5,11 +5,8 @@ import Link from "next/link"
 import {logout} from "@/lib/auth-actions";
 import {Session} from "next-auth";
 import {useEffect, useState} from "react";
-import RegisterModal from "@/components/register-modal";
-import {Dialog} from "radix-ui";
-import {XIcon} from "lucide-react";
-import SocialLogin from "@/components/social-login";
-import CredentialLoginModal from "@/components/credential-login-modal";
+import Modal from "@/components/ui/modal";
+import {LoginForm} from "@/components/ui/LoginForm";
 
 type ProviderIcon = {
   id: string;
@@ -27,6 +24,7 @@ const providers = [
 export default function Navbar({session}: { session: Session | null }) {
 
   const [randomIcon, setRandomIcon] = useState<ProviderIcon | null>(null);
+  const [open, setOpen] = useState(false);
   const [isLoginForm, setIsLoginForm] = useState(true);
 
   useEffect(() => {
@@ -35,6 +33,8 @@ export default function Navbar({session}: { session: Session | null }) {
   }, []);
 
   if (!randomIcon) return null;
+
+  const toggleLoginForm = () => setIsLoginForm(prev => !prev);
 
   return (
     <nav className="bg-white w-full shadow-md py-4 border-b border-gray-200">
@@ -52,15 +52,13 @@ export default function Navbar({session}: { session: Session | null }) {
               <Link href="/globe" className="text-slate-900 hover:text-sky-500">
                 Globe
               </Link>
-              <button className="flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-sm cursor-pointer"
-                      onClick={logout}
-              >
+              <button onClick={logout} className="flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-sm cursor-pointer">
                 Sign Out
               </button>
             </>
           ) : (
-            <Dialog.Root>
-              <Dialog.Trigger className="flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white p-2 px-4 rounded-sm cursor-pointer">
+            <Modal open={open} onOpenChange={setOpen}>
+              <Modal.Trigger className="flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white p-2 px-4 rounded-sm cursor-pointer">
                 Sign In
                 <Image
                   src={randomIcon.src}
@@ -69,49 +67,18 @@ export default function Navbar({session}: { session: Session | null }) {
                   height={20}
                   className="ml-2 bg-white rounded-full p-0.5 justify-center items-center"
                 />
-              </Dialog.Trigger>
+              </Modal.Trigger>
 
-              <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/50
-                  data-[state=open]:animate-[dialog-overlay-show_300ms] data-[state=closed]:animate-[dialog-overlay-hide_300ms]">
-                  <Dialog.Content className="fixed top-1/2 left-1/2 -translate-1/2 max-w-md w-full rounded-md bg-white p-8 text-gray-900 shadow
-                  data-[state=open]:animate-[dialog-content-show_300ms] data-[state=closed]:animate-[dialog-content-hide_300ms]">
-                    <div className="flex justify-between items-center mb-6 text-gray-700">
-                      <Dialog.Title className="text-xl font-semibold">
-                        {isLoginForm ? "Login " : "Register"}
-                      </Dialog.Title>
-
-                      <Dialog.Close className="text-gray-400 hover:text-gray-600 hover:cursor-pointer">
-                        <XIcon/>
-                      </Dialog.Close>
-                    </div>
-
-                    <div className="mt-4">
-                      <SocialLogin/>
-                    </div>
-
-                    <div className="mt-4">
-                      {isLoginForm ? (<CredentialLoginModal/>) : (<RegisterModal/>)}
-                    </div>
-
-                    <div className="px-4 py-2 w-full justify-center items-center ">
-                      <Dialog.Close className="px-4 py-2 w-full justify-center items-center hover:cursor-pointer rounded text-gray-400 font-medium text-sm hover:text-gray-600">
-                        Cancel
-                      </Dialog.Close>
-                      <button
-                        onClick={() => setIsLoginForm(!isLoginForm)}
-                        className="px-4 py-2 w-full justify-center  items-center rounded text-gray-400 text-xs hover:text-gray-600 hover:cursor-pointer"
-                      >
-                        {isLoginForm
-                          ? "You don't have an account? Register now!"
-                          : "Already have an account? Login now!"
-                        }
-                      </button>
-                    </div>
-                  </Dialog.Content>
-                </Dialog.Overlay>
-              </Dialog.Portal>
-            </Dialog.Root>
+              <Modal.Content title={isLoginForm ? "Login" : "Register"}>
+                <LoginForm isLoginForm={isLoginForm}/>
+                <button onClick={toggleLoginForm} className="px-4 py-2 w-full justify-center  items-center rounded text-gray-400 text-xs hover:text-gray-600 hover:cursor-pointer">
+                  {isLoginForm
+                    ? "You don't have an account? Register now!"
+                    : "Already have an account? Login now!"
+                  }
+                </button>
+              </Modal.Content>
+            </Modal>
           )}
         </div>
       </div>

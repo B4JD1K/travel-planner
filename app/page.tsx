@@ -24,11 +24,8 @@ export default async function LandingPage() {
               Create itineraries, organize destinations, and share your travel plans all in one place!
             </p>
 
-            <AuthButton
-              isLoggedIn={isLoggedIn}
-              className="border text-white font-semibold cursor-pointer rounded-md py-2 px-6 hover:poiner-cursor bg-black">
-              {isLoggedIn ? ("Get Started") : ("Log In")}
-            </AuthButton>
+            <AuthButton isLoggedIn={isLoggedIn} variant="hero"/>
+            <AuthButton isLoggedIn={isLoggedIn}/>
           </div>
 
           {/* Przycięty wygląd hero sekcji */}
@@ -116,9 +113,7 @@ export default async function LandingPage() {
           Join thousands of travelers who plan better trips with Travel Planner.
         </p>
 
-        <AuthButton isLoggedIn={isLoggedIn} className="border mx-2 font-semibold cursor-pointer rounded-md mt-2 py-2 px-4 hover:poiner-cursor bg-white">
-          {isLoggedIn ? ("Check It Out") : ("Sign Up Now")}
-        </AuthButton>
+        <AuthButton isLoggedIn={isLoggedIn} variant="cta"/>
       </section>
     </div>
   );
