@@ -14,7 +14,7 @@ export default function SocialLogin() {
       {providers.map((provider) => (
         <button
           key={provider.id}
-          className={`rounded-full justify-center items-center shadow-md p-4 hover:shadow-lg hover:scale-110 transition-all duration-150`}
+          className="rounded-full justify-center items-center shadow-md p-4 hover:shadow-lg hover:scale-110 transition-all duration-150 hover:cursor-pointer"
           type="submit"
           name="action"
           value={provider.id}

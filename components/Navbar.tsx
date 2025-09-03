@@ -4,12 +4,18 @@ import Image from "next/image";
 import Link from "next/link"
 import {logout} from "@/lib/auth-actions";
 import {Session} from "next-auth";
-import {useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import RegisterModal from "@/components/register-modal";
 import {Dialog} from "radix-ui";
 import {XIcon} from "lucide-react";
 import SocialLogin from "@/components/social-login";
 import CredentialLoginModal from "@/components/credential-login-modal";
+
+type ProviderIcon = {
+  id: string;
+  label: string;
+  src: string;
+};
 
 const providers = [
   {id: "google", label: "Google", src: "/icons/google.svg"},
@@ -20,12 +26,15 @@ const providers = [
 
 export default function Navbar({session}: { session: Session | null }) {
 
-  const randomIcon = useMemo(() => {
+  const [randomIcon, setRandomIcon] = useState<ProviderIcon | null>(null);
+  const [isLoginForm, setIsLoginForm] = useState(true);
+
+  useEffect(() => {
     const index = Math.floor(Math.random() * providers.length);
-    return providers[index];
+    setRandomIcon(providers[index]);
   }, []);
 
-  const [isLoginForm, setIsLoginForm] = useState(true);
+  if (!randomIcon) return null;
 
   return (
     <nav className="bg-white w-full shadow-md py-4 border-b border-gray-200">
@@ -70,7 +79,7 @@ export default function Navbar({session}: { session: Session | null }) {
                         {isLoginForm ? "Login " : "Register"}
                       </Dialog.Title>
 
-                      <Dialog.Close className="text-gray-400 hover:text-gray-600">
+                      <Dialog.Close className="text-gray-400 hover:text-gray-600 hover:cursor-pointer">
                         <XIcon/>
                       </Dialog.Close>
                     </div>
@@ -84,12 +93,12 @@ export default function Navbar({session}: { session: Session | null }) {
                     </div>
 
                     <div className="px-4 py-2 w-full justify-center items-center ">
-                      <Dialog.Close className="px-4 py-2 w-full justify-center items-center  rounded text-gray-400 font-medium text-sm hover:text-gray-600">
+                      <Dialog.Close className="px-4 py-2 w-full justify-center items-center hover:cursor-pointer rounded text-gray-400 font-medium text-sm hover:text-gray-600">
                         Cancel
                       </Dialog.Close>
                       <button
                         onClick={() => setIsLoginForm(!isLoginForm)}
-                        className="px-4 py-2 w-full justify-center items-center rounded text-gray-400 text-xs hover:text-gray-600"
+                        className="px-4 py-2 w-full justify-center  items-center rounded text-gray-400 text-xs hover:text-gray-600 hover:cursor-pointer"
                       >
                         {isLoginForm
                           ? "You don't have an account? Register now!"

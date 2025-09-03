@@ -45,8 +45,8 @@ export default async function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-8">
             Plan with confidence
           </h2>
-          <div className="flex gap-4">
-            <Card className="w-1/3">
+          <div className="flex flex-col md:flex-row gap-4 h-full justify-center">
+            <Card className="w-full md:w-1/3 hover:shadow-md transition-shadow">
               <CardContent>
                 <div className="bg-green-100/60 mb-2 w-10 h-10 p-2 items-center justify-center rounded-full">
                   <MapIcon/>
@@ -65,7 +65,7 @@ export default async function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="w-1/3">
+            <Card className="w-full md:w-1/3 hover:shadow-md transition-shadow">
               <CardContent>
                 <div className="bg-yellow-100/60 mb-2 w-10 h-10 p-2 items-center justify-center rounded-full">
                   <Clock4/>
@@ -84,7 +84,7 @@ export default async function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="w-1/3">
+            <Card className="w-full md:w-1/3 hover:shadow-md transition-shadow">
               <CardContent>
                 <div className="bg-blue-100/60 mb-2 w-10 h-10 p-2 items-center justify-center rounded-full">
                   <BackpackIcon/>

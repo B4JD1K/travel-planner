@@ -47,7 +47,7 @@ export default async function TripsPage() {
       {/* Wyświetlanie listy podróży */}
       <Card>
         <div className="flex items-center justify-between">
-        <div>
+        <div className="w-full">
         <CardHeader>
           <CardTitle>
             Welcome back, {userName}!
