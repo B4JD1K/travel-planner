@@ -11,7 +11,7 @@ export default async function LandingPage() {
     <div className="flex flex-col min-h-screen">
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main className="flex-1 mb-10">
 
         {/* Hero Section */}
         <section className="relative bg-gradient-to-b from-white to-blue-100 px-8 py-20 md:py-40">
@@ -113,7 +113,7 @@ export default async function LandingPage() {
         </h2>
 
         <p className="text-lg md:text-xl text-gray-400">
-          Join thousands of travelers who plan better trips with TripPlanner.
+          Join thousands of travelers who plan better trips with Travel Planner.
         </p>
 
         <AuthButton isLoggedIn={isLoggedIn} className="border mx-2 font-semibold cursor-pointer rounded-md mt-2 py-2 px-4 hover:poiner-cursor bg-white">
