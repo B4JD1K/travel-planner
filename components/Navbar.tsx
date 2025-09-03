@@ -72,8 +72,10 @@ export default function Navbar({session}: { session: Session | null }) {
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/50">
-                  <Dialog.Content className="fixed top-1/2 left-1/2 -translate-1/2 max-w-md w-full rounded-md bg-white p-8 text-gray-900 shadow">
+                <Dialog.Overlay className="fixed inset-0 bg-black/50
+                  data-[state=open]:animate-[dialog-overlay-show_300ms] data-[state=closed]:animate-[dialog-overlay-hide_300ms]">
+                  <Dialog.Content className="fixed top-1/2 left-1/2 -translate-1/2 max-w-md w-full rounded-md bg-white p-8 text-gray-900 shadow
+                  data-[state=open]:animate-[dialog-content-show_300ms] data-[state=closed]:animate-[dialog-content-hide_300ms]">
                     <div className="flex justify-between items-center mb-6 text-gray-700">
                       <Dialog.Title className="text-xl font-semibold">
                         {isLoginForm ? "Login " : "Register"}
