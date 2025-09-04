@@ -2,7 +2,7 @@ import NextAuth, {User} from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";
-import Twitter from "next-auth/providers/twitter";
+import LinkedIn from "@auth/core/providers/linkedin";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {PrismaAdapter} from "@auth/prisma-adapter";
 import {prisma} from "@/lib/prisma";
@@ -24,7 +24,16 @@ export const {auth, handlers, signIn, signOut} = NextAuth({
     }),
     GitHub,
     Facebook,
-    Twitter,
+    LinkedIn({
+      clientId: process.env.LINKEDIN_CLIENT_ID,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope: "r_dma_portability_self_serve",
+          response_type: "code",
+        },
+      },
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {

@@ -5,7 +5,7 @@ const providers = [
   {id: "google", label: "Google"},
   {id: "github", label: "GitHub"},
   {id: "facebook", label: "Facebook"},
-  {id: "x", label: "X"},
+  {id: "linkedin", label: "LinkedIn"},
 ];
 
 export default function SocialLogin() {

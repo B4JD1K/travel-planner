@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
       {
         hostname: 'pbs.twimg.com', // Twitter
       },
+      {
+        hostname: 'media.licdn.com'
+      }
     ]
   }
 };

@@ -9,7 +9,7 @@ const allowedProviders: ProviderId[] = [
   "google",
   "github",
   "facebook",
-  "x",
+  "linkedin"
 ];
 
 export async function doSocialLogin(formData: FormData) {
