@@ -1,12 +1,12 @@
 "use client"
 
 import {Button} from "@/components/ui/button";
-import {useTransition} from "react";
+import {useState, useTransition} from "react";
 import {addLocation} from "@/lib/actions/add-location";
 
 export default function NewLocationClient({tripId}: { tripId: string }) {
   const [isPending, startTransition] = useTransition();
-
+  const [error, setError] = useState("");
 
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center bg-gray-50">
@@ -17,8 +17,16 @@ export default function NewLocationClient({tripId}: { tripId: string }) {
           </h1>
 
           <form className="space-y-6" action={(formData: FormData) => {
-            startTransition(() => {
-              addLocation(formData, tripId);
+            startTransition(async () => {
+              const result = await addLocation(formData, tripId);
+
+              if (result?.error) {
+                setError(result.error);
+                return;
+              }
+
+              if (result?.success)
+                window.location.href = `/trips/${tripId}`;
             })
           }}>
             <div>
@@ -28,6 +36,7 @@ export default function NewLocationClient({tripId}: { tripId: string }) {
                 name="address"
                 className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required/>
+              {error && <div className="text-red-600 text-xs italic">{error}</div>}
             </div>
             <Button
               type="submit"
