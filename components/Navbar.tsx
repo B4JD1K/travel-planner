@@ -18,7 +18,7 @@ const providers = [
   {id: "google", label: "Google", src: "/icons/google.svg"},
   {id: "github", label: "GitHub", src: "/icons/github.svg"},
   {id: "facebook", label: "Facebook", src: "/icons/facebook.svg"},
-  {id: "x", label: "X", src: "/icons/x.svg"},
+  {id: "linkedin", label: "LinkedIn", src: "/icons/linkedin.svg"},
 ];
 
 export default function Navbar({session}: { session: Session | null }) {
@@ -69,15 +69,7 @@ export default function Navbar({session}: { session: Session | null }) {
                 />
               </Modal.Trigger>
 
-              <Modal.Content title={isLoginForm ? "Login" : "Register"}>
-                <LoginForm isLoginForm={isLoginForm}/>
-                <button onClick={toggleLoginForm} className="px-4 py-2 w-full justify-center  items-center rounded text-gray-400 text-xs hover:text-gray-600 hover:cursor-pointer">
-                  {isLoginForm
-                    ? "You don't have an account? Register now!"
-                    : "Already have an account? Login now!"
-                  }
-                </button>
-              </Modal.Content>
+              <LoginForm isLoginForm={isLoginForm} toggleLoginForm={toggleLoginForm}/>
             </Modal>
           )}
         </div>

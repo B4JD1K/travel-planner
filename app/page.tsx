@@ -25,7 +25,6 @@ export default async function LandingPage() {
             </p>
 
             <AuthButton isLoggedIn={isLoggedIn} variant="hero"/>
-            <AuthButton isLoggedIn={isLoggedIn}/>
           </div>
 
           {/* Przycięty wygląd hero sekcji */}

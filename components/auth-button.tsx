@@ -43,12 +43,7 @@ export default function AuthButton({isLoggedIn, variant = "default"}: AuthButton
 
       {!isLoggedIn && (
         <Modal open={open} onOpenChange={setOpen}>
-          <Modal.Content title={isLoginForm ? "Login" : "Register"}>
-            <LoginForm isLoginForm={isLoginForm}/>
-            <button onClick={toggleLoginForm} className="text-xs text-gray-400 hover:text-gray-600 mt-4 w-full text-center">
-              {isLoginForm ? "Don't have an account? Register" : "Already have an account? Login"}
-            </button>
-          </Modal.Content>
+          <LoginForm isLoginForm={isLoginForm} toggleLoginForm={toggleLoginForm}/>
         </Modal>
       )}
     </>
