@@ -1,7 +1,7 @@
 import {auth} from "@/auth";
 import {NextResponse} from "next/server";
 import {prisma} from "@/lib/prisma";
-import {getCountryFromCoordinates} from "@/lib/actions/geocode";
+import rawCountryCodes from "@/public/country_codes.json";
 
 export async function GET() {
   try {
@@ -19,6 +19,7 @@ export async function GET() {
         locationTitle: true,
         lat: true,
         lon: true,
+        country_code: true,
         trip: {
           select: {
             title: true,
@@ -27,15 +28,20 @@ export async function GET() {
       }
     });
 
-    const transformedLocations = await Promise.all(locations.map(async (loc) => {
-      const geocodeResult = await getCountryFromCoordinates(loc.lat, loc.lon);
-      return {
-        name: `${loc.trip.title} - ${geocodeResult.country}`,
-        lat: loc.lat,
-        lon: loc.lon,
-        country: geocodeResult.country,
+    const countryCodes: Record<string, string> = rawCountryCodes;
+    const transformedLocations = locations.map(
+      (loc) => {
+        const code = loc.country_code?.toLowerCase() ?? "xx";
+        const countryName = countryCodes[code] ?? "Unknown country";
+
+        return {
+          name: `${loc.trip.title} - ${countryName}`,
+          lat: loc.lat,
+          lon: loc.lon,
+          country: countryName,
+        }
       }
-    }))
+    )
 
     // Pobranie danych dotyczących wszystkich odwiedzonych lokalizacji, przerobionych na widok 3D
     return NextResponse.json(transformedLocations);

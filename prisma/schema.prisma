@@ -90,6 +90,7 @@ model Location {
   locationTitle String
   lat           Float
   lon           Float
+  country_code  String
   trip          Trip     @relation(fields: [tripId], references: [id])
   tripId        String
   order         Int      @default(0)

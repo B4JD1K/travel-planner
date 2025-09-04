@@ -1,19 +1,22 @@
-// Przechowuje wyniki geokodowania w pamięci
-const countryCache = new Map<string, string>();
+import rawCountryCodes from "@/public/country_codes.json"; // { "pl": "Poland", ... }
 
 // Funkcja opóźnienia dla retry logic
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Funkcja do pobierania kraju na podstawie współrzędnych
-// TODO: Refactor z country_codes.json
-export async function getCountryFromCoordinates(lat: number, lon: number): Promise<{ country: string }> {
-  const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`; // Tworzymy unikalny klucz dla współrzędnych
+export async function getCountryCodeFromCoordinates(lat: number, lon: number): Promise<{ code: string, name: string }> {
+
+  const countryCache = new Map<string, string>();
+  const countryCodes: Record<string, string> = rawCountryCodes;
+
+  // Tworzymy unikalny klucz dla współrzędnych
+  const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`;
 
   // Sprawdzamy, czy wynik jest już w cache
   if (countryCache.has(cacheKey)) {
-    return {country: countryCache.get(cacheKey)!};
+    const code = countryCache.get(cacheKey)!;
+    return {code, name: countryCodes[code] ?? code};
   }
 
   const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
@@ -25,28 +28,23 @@ export async function getCountryFromCoordinates(lat: number, lon: number): Promi
 
   while (attempts < maxAttempts) {
     try {
-      const response = await fetch(url);
-      const textResponse = await response.text();
-      const data = JSON.parse(textResponse);
+      const data = await fetch(url)
+        .then((res) => res.json());
 
       // Jeśli napotkany został błąd Rate Limited, ponawia zapytanie z opóźnieniem
       if (data?.error?.includes("Rate Limited")) {
         attempts++;
-        console.warn(`Rate limit exceeded. Retrying... (attempt ${attempts})`);
+        console.warn(`Rate limit exceeded. Retrying, please wait... (attempt ${attempts})`);
 
         await delay(delayTime * attempts);
         continue;
       }
 
-      if (!data || !data.address || !data.address.country)
-        return {country: 'Unknown country'};
+      const code = data?.address?.country_code?.toLowerCase();
+      if (!code) return {code: "xx", name: "Unknown country"};
 
-      const country = data.address.country;
-
-      // Buforowanie wyników w pamięci
-      countryCache.set(cacheKey, country);
-
-      return {country};
+      countryCache.set(cacheKey, code);
+      return {code, name: countryCodes[code] ?? code};
     } catch (error) {
       console.error("Error fetching country:", error);
       throw new Error("Failed to reverse geocode location.");
@@ -54,5 +52,5 @@ export async function getCountryFromCoordinates(lat: number, lon: number): Promi
   }
 
   // Jeśli wszystkie próby zawiodą
-  return {country: "Rate limit exceeded"};
+  return {code: "xx", name: "Rate limit exceeded"};
 }
