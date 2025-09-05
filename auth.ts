@@ -2,6 +2,7 @@ import NextAuth, {User} from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";
+import Discord from "@auth/core/providers/discord";
 import LinkedIn from "@auth/core/providers/linkedin";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {PrismaAdapter} from "@auth/prisma-adapter";
@@ -24,6 +25,7 @@ export const {auth, handlers, signIn, signOut} = NextAuth({
     }),
     GitHub,
     Facebook,
+    Discord,
     LinkedIn({
       clientId: process.env.LINKEDIN_CLIENT_ID,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET,

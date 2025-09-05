@@ -17,7 +17,8 @@ type ProviderIcon = {
 const providers = [
   {id: "google", label: "Google", src: "/icons/google.svg"},
   {id: "github", label: "GitHub", src: "/icons/github.svg"},
-  {id: "facebook", label: "Facebook", src: "/icons/facebook.svg"},
+  {id: "discord", label: "Discord", src: "/icons/discord.svg"},
+  // {id: "facebook", label: "Facebook", src: "/icons/facebook.svg"},
   {id: "linkedin", label: "LinkedIn", src: "/icons/linkedin.svg"},
 ];
 

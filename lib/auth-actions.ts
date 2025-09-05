@@ -8,7 +8,8 @@ import bcrypt from "bcrypt";
 const allowedProviders: ProviderId[] = [
   "google",
   "github",
-  "facebook",
+  "discord",
+  // "facebook",
   "linkedin"
 ];
 

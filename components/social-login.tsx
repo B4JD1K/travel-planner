@@ -4,7 +4,8 @@ import Image from "next/image";
 const providers = [
   {id: "google", label: "Google"},
   {id: "github", label: "GitHub"},
-  {id: "facebook", label: "Facebook"},
+  {id: "discord", label: "Discord"},
+  // {id: "facebook", label: "Facebook"},
   {id: "linkedin", label: "LinkedIn"},
 ];
 

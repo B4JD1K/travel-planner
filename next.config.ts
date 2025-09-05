@@ -14,13 +14,16 @@ const nextConfig: NextConfig = {
         hostname: 'avatars.githubusercontent.com', // GitHub avatars
       },
       {
+        hostname: 'cdn.discordapp.com', // Discord
+      },
+      {
         hostname: 'platform-lookaside.fbsbx.com', // Facebook
       },
       {
         hostname: 'pbs.twimg.com', // Twitter
       },
       {
-        hostname: 'media.licdn.com'
+        hostname: 'media.licdn.com', // LinkedIn
       }
     ]
   }
