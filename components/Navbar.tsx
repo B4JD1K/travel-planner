@@ -33,6 +33,10 @@ export default function Navbar({session}: { session: Session | null }) {
     setRandomIcon(providers[index]);
   }, []);
 
+  useEffect(() => {
+    if (!session) setOpen(false)
+  }, [session]);
+
   if (!randomIcon) return null;
 
   const toggleLoginForm = () => setIsLoginForm(prev => !prev);
