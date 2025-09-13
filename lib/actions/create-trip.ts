@@ -2,16 +2,17 @@
 
 import {auth} from "@/auth";
 import {prisma} from "@/lib/prisma";
-import {redirect} from "next/navigation";
 
-export async function createTrip(formData: FormData) {
+export type Result<T = null> = { success: boolean; message: string; data?: T; }
 
+export async function createTrip(formData: FormData): Promise<Result<{ id: string }>> {
   const session = await auth();
-
   if (!session || !session.user?.id)
-    throw new Error("User is not authenticated.");
+    return {
+      success: false,
+      message: "User is not authenticated."
+    };
 
-  // Pobieranie danych z przesłanego formularza 'FormData'
   const title = formData.get("title")?.toString();
   const description = formData.get("description")?.toString();
   const startDateStr = formData.get("startDate")?.toString();
@@ -19,14 +20,15 @@ export async function createTrip(formData: FormData) {
   const imageUrl = formData.get("imageUrl")?.toString();
 
   if (!title || !description || !startDateStr || !endDateStr)
-    throw new Error("All fields are required.");
+    return {
+      success: false,
+      message: "All fields are required."
+    };
 
-  // Konwersja na obiekty Date
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
 
-  // Tworzenie nowego rekordu w tabeli `trip`
-  await prisma.trip.create({
+  const trip = await prisma.trip.create({
     data: {
       title,
       description,
@@ -37,6 +39,9 @@ export async function createTrip(formData: FormData) {
     }
   });
 
-  // Po zapisaniu danych przekierowanie na stronę '/trips'
-  redirect("/trips");
+  return {
+    success: true,
+    message: "Trip created successfully.",
+    data: {id: trip.id} // tripId
+  };
 }

@@ -4,27 +4,54 @@ import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {createTrip} from "@/lib/actions/create-trip";
-import {useState, useTransition} from "react";
-import {UploadButton} from "@/lib/upload-thing";
+import {FormEvent, useState, useTransition} from "react";
+import {UploadButton, UploadDropzone} from "@/lib/upload-thing";
 import Image from "next/image";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export default function NewTrip() {
+  const router = useRouter();
+
   const [isPending, startTransition] = useTransition();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const handleAddTrip = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    if (imageUrl) formData.append("imageUrl", imageUrl);
+
+    const startDateStr = formData.get("startDate")?.toString();
+    const endDateStr = formData.get("endDate")?.toString();
+
+    if (startDateStr && endDateStr) {
+      const startDate = new Date(startDateStr);
+      const endDate = new Date(endDateStr);
+
+      if (startDate > endDate) {
+        toast.error("Start date cannot be after end date.");
+        return;
+      }
+    }
+
+    startTransition(async () => {
+      const res = await createTrip(formData);
+      if (res.success) {
+        toast.success(res.message);
+        router.push("/trips/" + res.data?.id); // tripId = res.data?.id
+      } else {
+        toast.error(res.message);
+      }
+    })
+  }
 
   return (
     <div className="max-w-lg mx-auto mt-10">
       <Card>
         <CardHeader>New Trip</CardHeader>
         <CardContent>
-          <form className="space-y-6" action={(formData: FormData) => {
-            if (imageUrl) {
-              formData.append("imageUrl",imageUrl);
-            }
-            startTransition(() => {
-              createTrip(formData)
-            })
-          }}>
+          <form className="space-y-6" onSubmit={handleAddTrip}>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Title
@@ -62,6 +89,7 @@ export default function NewTrip() {
                 <input
                   type="date"
                   name="startDate"
+                  required
                   className={cn(
                     "w-full border border-gray-300 px-3 py-2",
                     "rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -76,6 +104,7 @@ export default function NewTrip() {
                 <input
                   type="date"
                   name="endDate"
+                  required
                   className={cn(
                     "w-full border border-gray-300 px-3 py-2",
                     "rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -84,7 +113,9 @@ export default function NewTrip() {
               </div>
             </div>
             <div>
-              <label>Trip Image</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Trip Image
+              </label>
               {imageUrl && (
                 <Image
                   src={imageUrl}
@@ -94,16 +125,33 @@ export default function NewTrip() {
                   height={100}
                 />
               )}
-              <UploadButton
-                endpoint="imageUploader"
-                onClientUploadComplete={(res) => {
-                  if (res && res[0].ufsUrl)
-                    setImageUrl(res[0].ufsUrl);
-                }}
-                onUploadError={(error: Error) => {
-                  console.error("Upload error:", error);
-                }}
-              />
+              {imageUrl ? (
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    if (res && res[0].ufsUrl)
+                      setImageUrl(res[0].ufsUrl);
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error("Image upload failed.");
+                    console.error("Upload error:", error);
+                  }}
+                  className="cursor-pointer"
+                />
+              ) : (
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    if (res && res[0].ufsUrl)
+                      setImageUrl(res[0].ufsUrl);
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error("Image upload failed.");
+                    console.error("Upload error:", error);
+                  }}
+                  className="cursor-pointer"
+                />
+              )}
             </div>
             <Button type="submit" disabled={isPending} className="w-full cursor-pointer">
               {isPending ? "Creating..." : "Create Trip"}

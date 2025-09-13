@@ -3,72 +3,91 @@
 import {auth} from "@/auth";
 import {prisma} from "@/lib/prisma";
 import {getCountryCodeFromCoordinates} from "@/lib/actions/geocode";
+import countryCodes from "@/public/country_codes.json";
 
-type GeocodeSuccess = {
-  ok: true;
-  lat: number;
-  lon: number;
-  country_code: string;
-};
+export type Result<T = null> = { success: boolean; message: string; data?: T; }
 
-type GeocodeFail = {
-  ok: false;
-  error: string;
-};
+type GeocodeData = { lat: number; lon: number; country_code: string; };
 
-type GeocodeResult = GeocodeSuccess | GeocodeFail;
-
-async function geocodeAddress(address: string): Promise<GeocodeResult> {
+async function geocodeAddress(address: string): Promise<Result<GeocodeData>> {
   const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
   const url = `https://eu1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(address)}&format=json`;
 
   try {
-    const data = await fetch(url)
-      .then((res) => res.json());
+    const res = await fetch(url);
+    const data = await res.json();
 
     if (!data || data.length === 0)
-      return {ok: false, error: "Could not geocode the address."};
+      return {
+        success: false,
+        message: "Could not geocode the address."
+      };
 
     const {lat, lon} = data[0];
     if (isNaN(lat) || isNaN(lon))
-      return {ok: false, error: "Invalid coordinates returned."};
+      return {
+        success: false,
+        message: "Invalid coordinates returned."
+      };
 
-    const {code} = await getCountryCodeFromCoordinates(
+    const countryResult = await getCountryCodeFromCoordinates(
       parseFloat(lat),
       parseFloat(lon)
     );
 
+    if (!countryResult.success)
+      return {
+        success: false,
+        message: "Could not determine country code."
+      };
+
+    const {code} = countryResult.data!;
+
     return {
-      ok: true,
-      lat: parseFloat(lat),
-      lon: parseFloat(lon),
-      country_code: code,
+      success: true,
+      message: "Geocoding successful.",
+      data: {
+        lat: parseFloat(lat),
+        lon: parseFloat(lon),
+        country_code: code,
+      }
     };
 
   } catch (error) {
     console.error("Error parsing JSON:", error);
-    return {ok: false, error: "Could not geocode the address. Try to specify more details."};
+
+    return {
+      success: false,
+      message: "Could not geocode address, provide more details."
+    };
   }
 }
 
-export async function addLocation(formData: FormData, tripId: string) {
+export async function addLocation(formData: FormData, tripId: string): Promise<Result> {
   const session = await auth();
   if (!session)
-    return {error: "Not authenticated."};
+    return {
+      success: false,
+      message: "Not authenticated."
+    };
 
   const address = formData.get("address")?.toString();
   if (!address)
-    return {error: "Address is missing."};
+    return {
+      success: false,
+      message: "Address is missing."
+    };
 
   const location = await geocodeAddress(address);
-  if (!location.ok)
-    return {error: location.error};
+  if (!location.success)
+    return {
+      success: false,
+      message: location.message
+    };
 
-  const {lat, lon, country_code} = location;
+  const {lat, lon, country_code} = location.data!;
 
-  const count = await prisma.location.count({
-    where: {tripId}
-  });
+  const count = await prisma.location.count({where: {tripId}});
 
   await prisma.location.create({
     data: {
@@ -81,6 +100,8 @@ export async function addLocation(formData: FormData, tripId: string) {
     }
   });
 
-  // redirect(`/trips/${tripId}`);
-  return {success: true};
+  return {
+    success: true,
+    message: `Address geocoded successfully for location in placed in ${countryCodes[country_code as keyof typeof countryCodes]}.`
+  };
 }

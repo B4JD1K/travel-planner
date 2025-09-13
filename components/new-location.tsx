@@ -1,12 +1,32 @@
 "use client"
 
 import {Button} from "@/components/ui/button";
-import {useState, useTransition} from "react";
+import {FormEvent, useTransition} from "react";
 import {addLocation} from "@/lib/actions/add-location";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export default function NewLocationClient({tripId}: { tripId: string }) {
+  const router = useRouter();
+
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState("");
+
+  const handleAddLocation = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    startTransition(async () => {
+      const res = await addLocation(formData, tripId);
+
+      if (res.success) {
+        toast.success(res.message);
+        router.push(`/trips/${tripId}`);
+      } else {
+        toast.error(res.message)
+      }
+    });
+  }
 
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center bg-gray-50">
@@ -15,28 +35,22 @@ export default function NewLocationClient({tripId}: { tripId: string }) {
           <h1 className="text-3xl font-bold text-center mb-6">
             Add New Location
           </h1>
-
-          <form className="space-y-6" action={(formData: FormData) => {
-            startTransition(async () => {
-              const result = await addLocation(formData, tripId);
-
-              if (result?.error) {
-                setError(result.error);
-                return;
-              }
-
-              if (result?.success)
-                window.location.href = `/trips/${tripId}`;
-            })
-          }}>
+          <form className="space-y-6" onSubmit={handleAddLocation}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-              <input
-                type="text"
-                name="address"
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required/>
-              {error && <div className="text-red-600 text-xs italic">{error}</div>}
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  name="address"
+                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+                <label className="text-xs italic text-gray-400">
+                  Specify as much details as you can
+                </label>
+              </div>
             </div>
             <Button
               type="submit"

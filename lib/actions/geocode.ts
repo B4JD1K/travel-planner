@@ -1,56 +1,80 @@
-import rawCountryCodes from "@/public/country_codes.json"; // { "pl": "Poland", ... }
+import rawCountryCodes from "@/public/country_codes.json";
 
-// Funkcja opóźnienia dla retry logic
+export type Result<T = null> = { success: boolean; message: string; data?: T; };
+
+type CountryCodeData = { code: string; name: string; };
+
+const countryCache = new Map<string, string>();
+
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function getCountryCodeFromCoordinates(lat: number, lon: number): Promise<{ code: string, name: string }> {
-
-  const countryCache = new Map<string, string>();
+export async function getCountryCodeFromCoordinates(lat: number, lon: number): Promise<Result<CountryCodeData>> {
   const countryCodes: Record<string, string> = rawCountryCodes;
 
-  // Tworzymy unikalny klucz dla współrzędnych
   const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`;
 
-  // Sprawdzamy, czy wynik jest już w cache
   if (countryCache.has(cacheKey)) {
     const code = countryCache.get(cacheKey)!;
-    return {code, name: countryCodes[code] ?? code};
+    return {
+      success: true,
+      message: "Country code found in cache.",
+      data: {
+        code,
+        name: countryCodes[code] ?? code,
+      },
+    };
   }
 
   const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;
   const url = `https://eu1.locationiq.com/v1/reverse.php?key=${apiKey}&lat=${lat}&lon=${lon}&format=json`;
 
   let attempts = 0;
-  const maxAttempts = 10; // Maksymalna liczba prób (zapytań)
-  const delayTime = 500; // Początkowe opóźnienie
+  const maxAttempts = 10;
+  const delayTime = 500;
 
   while (attempts < maxAttempts) {
     try {
-      const data = await fetch(url)
-        .then((res) => res.json());
+      const res = await fetch(url);
+      const data = await res.json();
 
-      // Jeśli napotkany został błąd Rate Limited, ponawia zapytanie z opóźnieniem
       if (data?.error?.includes("Rate Limited")) {
         attempts++;
-        console.warn(`Rate limit exceeded. Retrying, please wait... (attempt ${attempts})`);
-
+        console.warn(`Rate limit exceeded. Retrying (attempt ${attempts})`);
         await delay(delayTime * attempts);
         continue;
       }
 
       const code = data?.address?.country_code?.toLowerCase();
-      if (!code) return {code: "xx", name: "Unknown country"};
 
+      if (!code)
+        return {
+          success: false,
+          message: "Could not determine country code from response."
+        };
+
+      const name = countryCodes[code] ?? "Unknown country";
       countryCache.set(cacheKey, code);
-      return {code, name: countryCodes[code] ?? code};
+
+      return {
+        success: true,
+        message: "Country code successfully resolved.",
+        data: {code, name}
+      };
+
     } catch (error) {
-      console.error("Error fetching country:", error);
-      throw new Error("Failed to reverse geocode location.");
+      console.error("Reverse geocoding error:", error);
+
+      return {
+        success: false,
+        message: "Failed to fetch reverse geocoding data."
+      };
     }
   }
 
-  // Jeśli wszystkie próby zawiodą
-  return {code: "xx", name: "Rate limit exceeded"};
+  return {
+    success: false,
+    message: "Rate limit exceeded after multiple attempts."
+  };
 }
