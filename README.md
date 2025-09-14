@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌄 Travel Planner
 
-## Getting Started
+Welcome to the **Travel Planner**! This project is designed to help users plan and organize trips efficiently, providing features for trips such as adding and reordering locations, and see the preview of trips on the map and the map.
 
-First, run the development server:
+Travel Planner is a modern web application built with **React**, **Next.js** and styled using **RadixUI and Tailwind CSS**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[Live demo](http://travel-planner.bn000.shop/) where you can try the app by yourself!
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Features
+ 
+- **🏠 Trip Creation**: Create new trips and set dates, add locations, reorder itineraries and see places on the map and the globe.
+- **🔍 Advanced Search**: Search for houses by location, date, number of guests, beds, and other criteria.
+- **🔐 Secure Authentication**: Secure user registration and login with Next-Auth via social media or email.
+- **🏢 Domain-Driven Design**: Ensures maintainable and scalable architecture.
+- **📱 Responsive Design**: Mobile-friendly interface for planning on the go.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+### 🖥️ Frontend
+    - React 19
+    - TypeScript
+    - Tailwind CSS
+    - Radix UI
+    - sonner [@emilkowalski](https://emilkowal.ski/)
+    - UploadThing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 💾 Backend
+    - Next-Auth
+    - Prisma ORM
+    - PostgreSQL
+    - LocationIQ
+    - Leaflet
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### Main page:
+[![image.png](https://i.postimg.cc/2S7GPvs5/image.png)](https://postimg.cc/ts7F61C0)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Sign In form:
+[![image.png](https://i.postimg.cc/0Nv3S9sz/image.png)](https://postimg.cc/Xr2QSSXW)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Dashboard:
+[![image.png](https://i.postimg.cc/fb5H0XCP/image.png)](https://postimg.cc/06MGTzLG)
+
+### Globe view:
+[![image.png](https://i.postimg.cc/fbWGFMg6/image.png)](https://postimg.cc/jD93nYTX)
+
+### Trip details:
+[![image.png](https://i.postimg.cc/Y2JhwP7X/image.png)](https://postimg.cc/Hj9pwBV5)
+
+---
+
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](https://opensource.org/license/mit) for details.
+
+---
+
+## 🙌 Acknowledgements
+
+- Special thanks to the [@machadop1407](https://github.com/@machadop1407) - creator of [the tutorial](https://youtu.be/j7Qu65rUcsY).
+
+---
+
+Happy travels and planning!
