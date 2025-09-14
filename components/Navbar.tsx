@@ -16,25 +16,11 @@ type ProviderIcon = {
   src: string;
 };
 
-const providers = [
-  {id: "google", label: "Google", src: "/icons/google.svg"},
-  {id: "github", label: "GitHub", src: "/icons/github.svg"},
-  {id: "discord", label: "Discord", src: "/icons/discord.svg"},
-  // {id: "facebook", label: "Facebook", src: "/icons/facebook.svg"},
-  {id: "linkedin", label: "LinkedIn", src: "/icons/linkedin.svg"},
-];
-
-export default function Navbar({session}: { session: Session | null }) {
+export default function Navbar({session, randomIcon}: { session: Session | null, randomIcon: ProviderIcon }) {
   const router = useRouter();
 
-  const [randomIcon, setRandomIcon] = useState<ProviderIcon | null>(null);
   const [open, setOpen] = useState(false);
   const [isLoginForm, setIsLoginForm] = useState(true);
-
-  useEffect(() => {
-    const index = Math.floor(Math.random() * providers.length);
-    setRandomIcon(providers[index]);
-  }, []);
 
   useEffect(() => {
     if (!session) setOpen(false)
