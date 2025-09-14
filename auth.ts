@@ -27,8 +27,6 @@ export const {auth, handlers, signIn, signOut} = NextAuth({
     Facebook,
     Discord,
     LinkedIn({
-      clientId: process.env.LINKEDIN_CLIENT_ID,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
       authorization: {
         params: {
           scope: "r_dma_portability_self_serve",

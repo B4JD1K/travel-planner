@@ -7,10 +7,6 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {MapPin} from "lucide-react";
 import countryCodes from "@/public/country_codes.json";
 
-// Komponent Globe korzysta z przeglądarkowych API (w tym `window` oraz np. WebGL itp.)
-// Korzystając z importów `import Globe, {GlobeMethods} from "react-globe.gl"`
-// aplikacja próbuje wyrenderować go po stronie serwera, co wyrzucało błąd `window is not defined`
-// W związku z tym ładowany jest on dynamicznie tylko po stronie klienta, z wyłączonym SSR - `ssr: false`
 const Globe = dynamic(() => import("react-globe.gl"), {
   ssr: false,
 });
@@ -32,12 +28,10 @@ export default function GlobePage() {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const data = await fetch("/api/trips")
-          .then((res) => res.json());
+        const res = await fetch("/api/trips");
+        const data = await res.json();
 
         const countrySet = new Set<string>();
-
-        console.log(data)
 
         // filtr na przypadek uszkodzonych rekordów
         const validLocations: GlobeLocation[] = data
@@ -144,14 +138,14 @@ export default function GlobePage() {
                           .sort()
                           .map((code, key) => {
                             const countryName = countryCodes[code as keyof typeof countryCodes] ?? code;
-
                             return (
                               <div key={key} className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
                                 <MapPin className="h-4 w-4 text-red-500"/>
                                 <span className="font-medium">{countryName}</span>
                               </div>
                             );
-                          })}
+                          })
+                        }
 
                       </div>
                     </div>

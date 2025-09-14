@@ -1,4 +1,4 @@
-import {PrismaClient} from "@/app/generated/prisma/client";
+import {PrismaClient} from '@prisma/client';
 
 // Tworzę zmienną globalną dla Prisma, aby unikać wielokrotnego tworzenia instancji
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
