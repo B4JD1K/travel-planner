@@ -5,6 +5,7 @@ import type {ProviderId} from "next-auth/providers";
 import {prisma} from "@/lib/prisma";
 import {AuthError} from "next-auth";
 import bcrypt from "bcrypt";
+import {toast} from "sonner";
 
 export type Result<T> = { success: boolean; message: string; data?: T; }
 
@@ -20,7 +21,7 @@ export async function doSocialLogin(formData: FormData) {
   const action = formData.get("action");
 
   if (typeof action !== "string" || !allowedProviders.includes(action as ProviderId))
-    throw new Error("Unsupported social provider");
+    toast.error("Unsupported social provider");
 
   await signIn(action as ProviderId, {redirectTo: "/trips"});
 }
@@ -30,7 +31,10 @@ export async function loginWithCredentials(formData: FormData): Promise<Result<n
   const password = formData.get("password")?.toString();
 
   if (!email || !password)
-    return {success: false, message: "Missing credentials"};
+    return {
+      success: false,
+      message: "Missing credentials"
+    };
 
   try {
     const loginResult = await signIn("credentials", {
@@ -40,23 +44,45 @@ export async function loginWithCredentials(formData: FormData): Promise<Result<n
     });
 
     if (loginResult?.error) {
-      if (loginResult.error === "CredentialsSignin")
-        return {success: false, message: "Invalid email or password"};
+      if (loginResult.error === "CredentialsSignin") {
+        return {
+          success: false,
+          message: "Invalid email or password"
+        };
+      }
 
-      return {success: false, message: "Authentication failed. Please try again."};
+      return {
+        success: false,
+        message: "Authentication failed. Please try again."
+      };
     }
 
-    return {success: true, message: "Successfully logged in!"};
+    // Login successful
+    return {
+      success: true,
+      message: "Successfully logged in!"
+    };
+
   } catch (e) {
     if (e instanceof AuthError) {
-      if (e.type === "CredentialsSignin")
-        return {success: false, message: "Invalid email or password"};
+      if (e.type === "CredentialsSignin") {
+        return {
+          success: false,
+          message: "Invalid email or password"
+        };
+      }
 
-      return {success: false, message: "Authentication failed. Please try again."};
+      return {
+        success: false,
+        message: "Authentication failed. Please try again."
+      };
     }
-
     console.error("loginWithCredentials message:", e);
-    return {success: false, message: "Internal error occurred. Please try again."};
+
+    return {
+      success: false,
+      message: "Internal error occurred. Please try again."
+    };
   }
 }
 
@@ -92,15 +118,30 @@ export async function registerUser(formData: FormData): Promise<Result<null>> {
     });
 
     if (loginResult?.error)
-      return {success: false, message: "Failed to log in after registration"};
+      return {
+        success: false,
+        message: "Failed to log in after registration"
+      };
 
-    return {success: true, message: "Account created successfully! Logged in!"};
+    return {
+      success: true,
+      message: "Account created successfully! Logged in!"
+    };
   } catch (e) {
     console.error("registerUser message:", e);
-    return {success: false, message: "Registration failed. Please try again."};
+
+    return {
+      success: false,
+      message: "Registration failed. Please try again."
+    };
   }
 }
 
-export async function logout() {
-  await signOut({redirectTo: "/"});
+export async function logout(): Promise<Result<void>> {
+  await signOut({redirect: false});
+
+  return {
+    success: true,
+    message: "Logged out successfully"
+  }
 }

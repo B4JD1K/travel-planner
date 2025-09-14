@@ -7,6 +7,8 @@ import {Session} from "next-auth";
 import {useEffect, useState} from "react";
 import Modal from "@/components/ui/modal";
 import {LoginForm} from "@/components/ui/LoginForm";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 type ProviderIcon = {
   id: string;
@@ -23,6 +25,7 @@ const providers = [
 ];
 
 export default function Navbar({session}: { session: Session | null }) {
+  const router = useRouter();
 
   const [randomIcon, setRandomIcon] = useState<ProviderIcon | null>(null);
   const [open, setOpen] = useState(false);
@@ -41,6 +44,17 @@ export default function Navbar({session}: { session: Session | null }) {
 
   const toggleLoginForm = () => setIsLoginForm(prev => !prev);
 
+  const handleLogout = async () => {
+    const res = await logout();
+    if (res.success) {
+      toast.success(res.message);
+      setOpen(false);
+      router.push("/");
+    } else {
+      toast.error("Failed to log out");
+    }
+  };
+
   return (
     <nav className="bg-white w-full shadow-md py-4 border-b border-gray-200">
       <div className="container mx-auto flex justify-between items-center px-6 lg:px-8">
@@ -57,7 +71,7 @@ export default function Navbar({session}: { session: Session | null }) {
               <Link href="/globe" className="text-slate-900 hover:text-sky-500">
                 Globe
               </Link>
-              <button onClick={logout} className="flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-sm cursor-pointer">
+              <button onClick={handleLogout} className="flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-sm cursor-pointer">
                 Sign Out
               </button>
             </>
