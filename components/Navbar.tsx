@@ -50,6 +50,7 @@ export default function Navbar({session}: { session: Session | null }) {
       toast.success(res.message);
       setOpen(false);
       router.push("/");
+      router.refresh();
     } else {
       toast.error("Failed to log out");
     }
