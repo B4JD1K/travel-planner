@@ -6,8 +6,7 @@ import {prisma} from "@/lib/prisma";
 import {AuthError} from "next-auth";
 import bcrypt from "bcrypt";
 import {toast} from "sonner";
-
-export type Result<T> = { success: boolean; message: string; data?: T; }
+import {Result} from "@/lib/types"
 
 const allowedProviders: ProviderId[] = [
   "google",
@@ -26,7 +25,7 @@ export async function doSocialLogin(formData: FormData) {
   await signIn(action as ProviderId, {redirectTo: "/trips"});
 }
 
-export async function loginWithCredentials(formData: FormData): Promise<Result<null>> {
+export async function loginWithCredentials(formData: FormData): Promise<Result> {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
 
@@ -86,7 +85,7 @@ export async function loginWithCredentials(formData: FormData): Promise<Result<n
   }
 }
 
-export async function registerUser(formData: FormData): Promise<Result<null>> {
+export async function registerUser(formData: FormData): Promise<Result> {
   const name = formData.get("name")?.toString();
   const surname = formData.get("surname")?.toString();
   const email = formData.get("email")?.toString();

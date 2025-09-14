@@ -4,10 +4,7 @@ import {auth} from "@/auth";
 import {prisma} from "@/lib/prisma";
 import {getCountryCodeFromCoordinates} from "@/lib/actions/geocode";
 import countryCodes from "@/public/country_codes.json";
-
-export type Result<T = null> = { success: boolean; message: string; data?: T; }
-
-type GeocodeData = { lat: number; lon: number; country_code: string; };
+import {Result, GeocodeData} from "@/lib/types";
 
 async function geocodeAddress(address: string): Promise<Result<GeocodeData>> {
   const apiKey = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY;

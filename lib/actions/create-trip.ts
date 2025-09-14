@@ -2,8 +2,7 @@
 
 import {auth} from "@/auth";
 import {prisma} from "@/lib/prisma";
-
-export type Result<T = null> = { success: boolean; message: string; data?: T; }
+import {Result} from "@/lib/types";
 
 export async function createTrip(formData: FormData): Promise<Result<{ id: string }>> {
   const session = await auth();

@@ -1,8 +1,5 @@
 import rawCountryCodes from "@/public/country_codes.json";
-
-export type Result<T = null> = { success: boolean; message: string; data?: T; };
-
-type CountryCodeData = { code: string; name: string; };
+import {CountryCodeData, Result} from "../types";
 
 const countryCache = new Map<string, string>();
 
